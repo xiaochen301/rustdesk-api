@@ -1,4 +1,7 @@
-# XC: build the customized rustdesk-api (Go) for the XC server deployments.
+# XC: build the customized rustdesk-api (Go + CGO/sqlite) for the XC server
+# deployments. Built inside alpine (musl) with CGO enabled: the API links
+# mattn/go-sqlite3 which REQUIRES cgo (a CGO_ENABLED=0 build produces a stub
+# that only fails at runtime), and the runtime image (s6) is alpine based.
 name: xc-build
 
 on:
@@ -12,29 +15,25 @@ permissions:
 
 jobs:
   build-linux-amd64:
-    name: Build apimain (linux amd64)
+    name: Build apimain (linux amd64, alpine/musl, CGO)
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-
-      - name: Build apimain
+      - name: Build (alpine, cgo)
         run: |
-          go mod tidy
-          mkdir -p dist
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o dist/apimain ./cmd
-          sha256sum dist/apimain | tee dist/SHA256SUMS
-          ls -la dist/
+          docker run --rm -v "$PWD:/src" -w /src golang:alpine sh /src/build-alpine.sh
+
+      - name: Collect artifacts
+        run: |
+          sha256sum dist/alpine/apimain | tee dist/alpine/SHA256SUMS
+          ls -la dist/alpine/
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: apimain-linux-amd64
-          path: dist/
+          path: dist/alpine/
           if-no-files-found: error
           retention-days: 30
