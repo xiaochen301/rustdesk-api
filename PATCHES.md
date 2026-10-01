@@ -53,6 +53,8 @@
   - 开启后 IsAdmin 用户不可登录客户端（默认保持既有行为，避免迁移期破坏现有 admin 设备）
   - i18n：AdminCannotLoginClient
 
+- **静态资源缓存策略**（2026-10-02，部署健壮性）：`/_admin` 路由组加 `adminStaticCachePolicy` 中间件——`/static/`（Vite 构建产物，文件名带 hash）`immutable` 长缓存；index.html 等 `no-cache` 强制协商。根因：无 Cache-Control 时浏览器启发式缓存旧 index.html，部署新版本后旧页面引用已删除的旧 chunk → SPA 导航报 "Failed to fetch dynamically imported module"（配合前端自恢复逻辑双保险）
+
 ## 说明
 
 - 本重构为正规改造（非补丁式），台账记录过程中的临时妥协与技术债
