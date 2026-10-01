@@ -27,6 +27,7 @@ jobs:
 
       - name: Collect artifacts
         run: |
+          sudo chown -R "$(id -u):$(id -g)" dist
           sha256sum dist/alpine/apimain | tee dist/alpine/SHA256SUMS
           ls -la dist/alpine/
 
