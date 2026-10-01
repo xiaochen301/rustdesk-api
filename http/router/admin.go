@@ -163,6 +163,8 @@ func PeerBind(rg *gin.RouterGroup) {
 	{
 		cont := &admin.Peer{}
 		aR.GET("/list", cont.List)
+		aR.GET("/stray", cont.Stray)  // XC: 游离设备列表
+		aR.POST("/adopt", cont.Adopt) // XC: 收编游离设备
 		aR.GET("/detail/:id", cont.Detail)
 		aR.POST("/create", cont.Create)
 		aR.POST("/update", cont.Update)

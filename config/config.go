@@ -23,6 +23,8 @@ type App struct {
 	DisablePwdLogin  bool          `mapstructure:"disable-pwd-login"`
 	CaptchaThreshold int           `mapstructure:"captcha-threshold"`
 	BanThreshold     int           `mapstructure:"ban-threshold"`
+	// XC: 禁止系统管理员登录客户端（默认 false=允许，保持既有行为）
+	DisableAdminClientLogin bool `mapstructure:"disable-admin-client-login"`
 }
 type Admin struct {
 	Title           string `mapstructure:"title"`

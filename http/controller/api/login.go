@@ -75,6 +75,13 @@ func (l *Login) Login(c *gin.Context) {
 		return
 	}
 
+	// XC: 禁止系统管理员登录客户端（配置开启时生效）
+	if global.Config.App.DisableAdminClientLogin && u.IsAdmin != nil && *u.IsAdmin {
+		loginLimiter.RecordFailedAttempt(clientIp)
+		response.Error(c, response.TranslateMsg(c, "AdminCannotLoginClient"))
+		return
+	}
+
 	//根据refer判断是webclient还是app
 	ref := c.GetHeader("referer")
 	if ref != "" {

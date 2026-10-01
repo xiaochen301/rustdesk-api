@@ -63,6 +63,13 @@ func (ct *Group) Create(c *gin.Context) {
 		response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
 		return
 	}
+	// XC: 保存群组管理员列表
+	if len(f.AdminIds) > 0 {
+		if err := service.AllService.GroupService.SetAdmins(u.Id, f.AdminIds); err != nil {
+			response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
+			return
+		}
+	}
 	response.Success(c, nil)
 }
 
@@ -119,6 +126,13 @@ func (ct *Group) Update(c *gin.Context) {
 	if err != nil {
 		response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
 		return
+	}
+	// XC: 更新群组管理员列表（传了字段才替换；未传保持原样）
+	if f.AdminIds != nil {
+		if err := service.AllService.GroupService.SetAdmins(u.Id, f.AdminIds); err != nil {
+			response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
+			return
+		}
 	}
 	response.Success(c, nil)
 }

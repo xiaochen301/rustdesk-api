@@ -5,6 +5,7 @@ import (
 	"github.com/lejianwen/rustdesk-api/v2/global"
 	"github.com/lejianwen/rustdesk-api/v2/http/request/admin"
 	"github.com/lejianwen/rustdesk-api/v2/http/response"
+	"github.com/lejianwen/rustdesk-api/v2/model"
 	"github.com/lejianwen/rustdesk-api/v2/service"
 	"gorm.io/gorm"
 	"strconv"
@@ -237,4 +238,75 @@ func (ct *Peer) SimpleData(c *gin.Context) {
 		tx.Where("id in (?)", f.Ids)
 	})
 	response.Success(c, res)
+}
+
+// XC: StrayForm 收编表单
+type StrayAdoptForm struct {
+	RowId  uint `json:"row_id" validate:"required"`
+	UserId uint `json:"user_id" validate:"required"`
+}
+
+// Stray 游离设备列表
+// @Tags 设备
+// @Summary 游离设备列表（注册过但从未绑定用户）
+// @Description 游离设备列表
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} response.Response{data=model.PeerList}
+// @Failure 500 {object} response.Response
+// @Router /admin/peer/stray [get]
+// @Security token
+func (ct *Peer) Stray(c *gin.Context) {
+	query := &admin.PageQuery{}
+	if err := c.ShouldBindQuery(query); err != nil {
+		response.Fail(c, 101, response.TranslateMsg(c, "ParamsError")+err.Error())
+		return
+	}
+	res := service.AllService.PeerService.ListStray(query.Page, query.PageSize)
+	response.Success(c, res)
+}
+
+// Adopt 收编游离设备（绑定到托管用户）
+// @Tags 设备
+// @Summary 收编游离设备
+// @Description 收编游离设备到托管用户
+// @Accept  json
+// @Produce  json
+// @Param body body admin.StrayAdoptForm true "收编信息"
+// @Success 200 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/peer/adopt [post]
+// @Security token
+func (ct *Peer) Adopt(c *gin.Context) {
+	f := &StrayAdoptForm{}
+	if err := c.ShouldBindJSON(f); err != nil {
+		response.Fail(c, 101, response.TranslateMsg(c, "ParamsError")+err.Error())
+		return
+	}
+	// 校验设备存在且未绑定
+	peer := service.AllService.PeerService.InfoByRowId(f.RowId)
+	if peer.RowId == 0 {
+		response.Fail(c, 101, response.TranslateMsg(c, "ItemNotFound"))
+		return
+	}
+	if peer.UserId != 0 {
+		response.Fail(c, 101, response.TranslateMsg(c, "PeerAlreadyBound"))
+		return
+	}
+	// 校验目标用户存在且为托管用户
+	u := service.AllService.UserService.InfoById(f.UserId)
+	if u.Id == 0 {
+		response.Fail(c, 101, response.TranslateMsg(c, "ItemNotFound"))
+		return
+	}
+	if u.Type != model.UserTypeManaged {
+		response.Fail(c, 101, response.TranslateMsg(c, "AdoptToManagedOnly"))
+		return
+	}
+	err := service.AllService.PeerService.AdoptPeer(f.RowId, f.UserId)
+	if err != nil {
+		response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
+		return
+	}
+	response.Success(c, nil)
 }

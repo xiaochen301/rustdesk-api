@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const DatabaseVersion = 265
+const DatabaseVersion = 266 // XC: 266 = 用户 type 列 + 群组 mode 列 + group_admins 表（AutoMigrate 自动应用）
 
 // @title 管理系统API
 // @version 1.0
@@ -308,6 +308,7 @@ func Migrate(version uint) {
 		&model.AddressBookCollectionRule{},
 		&model.ServerCmd{},
 		&model.DeviceGroup{},
+		&model.GroupAdmin{}, // XC: 群组管理员多对多
 	)
 	if err != nil {
 		global.Logger.Error("migrate err :=>", err)

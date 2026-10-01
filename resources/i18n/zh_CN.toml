@@ -165,3 +165,18 @@ other = "注册成功，请等待管理员审核。"
 description = "Managed user cannot login."
 one = "该账号为托管用户，不可登录。"
 other = "该账号为托管用户，不可登录。"
+
+[PeerAlreadyBound]
+description = "Peer already bound."
+one = "该设备已绑定用户，无法收编。"
+other = "该设备已绑定用户，无法收编。"
+
+[AdoptToManagedOnly]
+description = "Adopt target must be managed user."
+one = "只能收编到托管用户。"
+other = "只能收编到托管用户。"
+
+[AdminCannotLoginClient]
+description = "Admin cannot login client."
+one = "系统管理员不可登录客户端。"
+other = "系统管理员不可登录客户端。"

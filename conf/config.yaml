@@ -9,6 +9,7 @@ app:
   token-expire: 168h
   web-sso: true #web auth sso
   disable-pwd-login: false #禁用密码登录
+  disable-admin-client-login: false # XC: 禁止系统管理员登录客户端（false=允许，保持既有行为）
 
 admin:
   enable: true  # XC: 管理后台入口开关（false=关闭 /_admin 与 /api/admin 入口；客户端协议 /api/* 不受影响）

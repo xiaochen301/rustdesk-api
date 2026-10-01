@@ -151,3 +151,22 @@ func (ps *PeerService) BatchDelete(ids []uint) error {
 func (ps *PeerService) Update(u *model.Peer) error {
 	return DB.Model(u).Updates(u).Error
 }
+
+// XC: ListStray 游离设备列表（注册过但从未绑定用户：user_id = 0）
+func (ps *PeerService) ListStray(page, pageSize uint) (res *model.PeerList) {
+	res = &model.PeerList{}
+	res.Page = int64(page)
+	res.PageSize = int64(pageSize)
+	tx := DB.Model(&model.Peer{})
+	tx.Where("user_id = 0")
+	tx.Count(&res.Total)
+	tx.Scopes(Paginate(page, pageSize))
+	tx.Order("row_id desc")
+	tx.Find(&res.Peers)
+	return
+}
+
+// XC: AdoptPeer 收编游离设备（绑定到托管用户）
+func (ps *PeerService) AdoptPeer(rowId uint, userId uint) error {
+	return DB.Model(&model.Peer{}).Where("row_id = ?", rowId).Update("user_id", userId).Error
+}

@@ -163,3 +163,18 @@ other = "Register success, wait admin confirm."
 description = "Managed user cannot login."
 one = "This account is a managed user and cannot sign in."
 other = "This account is a managed user and cannot sign in."
+
+[PeerAlreadyBound]
+description = "Peer already bound."
+one = "This device is already bound to a user and cannot be adopted."
+other = "This device is already bound to a user and cannot be adopted."
+
+[AdoptToManagedOnly]
+description = "Adopt target must be managed user."
+one = "Devices can only be adopted into a managed user."
+other = "Devices can only be adopted into a managed user."
+
+[AdminCannotLoginClient]
+description = "Admin cannot login client."
+one = "Administrators are not allowed to sign in from the client."
+other = "Administrators are not allowed to sign in from the client."
