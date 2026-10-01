@@ -9,5 +9,4 @@ cd /src
 go mod tidy
 CGO_ENABLED=1 go build -buildvcs=false -ldflags="-s -w -linkmode external -extldflags -static" -o dist/alpine/apimain ./cmd
 echo "=== result ==="
-file dist/alpine/apimain
 ls -la dist/alpine/apimain
