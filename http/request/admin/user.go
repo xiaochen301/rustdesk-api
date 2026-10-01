@@ -13,6 +13,7 @@ type UserForm struct {
 	Avatar   string           `json:"avatar"`
 	GroupId  uint             `json:"group_id" validate:"required"`
 	IsAdmin  *bool            `json:"is_admin" `
+	Type     int              `json:"type"` // XC: 1=普通 2=托管（不可登录）
 	Status   model.StatusCode `json:"status" validate:"required,gte=0"`
 	Remark   string           `json:"remark"`
 }
@@ -25,6 +26,7 @@ func (uf *UserForm) FromUser(user *model.User) *UserForm {
 	uf.Avatar = user.Avatar
 	uf.GroupId = user.GroupId
 	uf.IsAdmin = user.IsAdmin
+	uf.Type = user.Type
 	uf.Status = user.Status
 	uf.Remark = user.Remark
 	return uf
@@ -38,6 +40,10 @@ func (uf *UserForm) ToUser() *model.User {
 	user.Avatar = uf.Avatar
 	user.GroupId = uf.GroupId
 	user.IsAdmin = uf.IsAdmin
+	user.Type = uf.Type
+	if user.Type == 0 {
+		user.Type = model.UserTypeNormal // XC: 默认普通用户
+	}
 	user.Status = uf.Status
 	user.Remark = uf.Remark
 	return user

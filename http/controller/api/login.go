@@ -68,6 +68,13 @@ func (l *Login) Login(c *gin.Context) {
 		return
 	}
 
+	// XC: 托管用户不可登录
+	if u.Type == model.UserTypeManaged {
+		loginLimiter.RecordFailedAttempt(clientIp)
+		response.Error(c, response.TranslateMsg(c, "ManagedUserCannotLogin"))
+		return
+	}
+
 	//根据refer判断是webclient还是app
 	ref := c.GetHeader("referer")
 	if ref != "" {

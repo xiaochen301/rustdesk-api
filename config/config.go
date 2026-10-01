@@ -30,6 +30,12 @@ type Admin struct {
 	HelloFile       string `mapstructure:"hello-file"`
 	IdServerPort    int    `mapstructure:"id-server-port"`
 	RelayServerPort int    `mapstructure:"relay-server-port"`
+	Enable          *bool  `mapstructure:"enable"` // XC: 管理后台入口开关（nil=启用；false=关闭 /_admin 与 /api/admin）
+}
+
+// XC: IsEnabled 管理后台是否启用（未配置时默认启用）
+func (a *Admin) IsEnabled() bool {
+	return a.Enable == nil || *a.Enable
 }
 type Config struct {
 	Lang       string `mapstructure:"lang"`

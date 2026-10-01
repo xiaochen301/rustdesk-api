@@ -11,6 +11,7 @@ app:
   disable-pwd-login: false #禁用密码登录
 
 admin:
+  enable: true  # XC: 管理后台入口开关（false=关闭 /_admin 与 /api/admin 入口；客户端协议 /api/* 不受影响）
   title: "RustDesk API Admin"
   hello-file: "./conf/admin/hello.html"  #优先使用file
   hello: ""

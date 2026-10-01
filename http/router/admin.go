@@ -9,9 +9,18 @@ import (
 	"github.com/lejianwen/rustdesk-api/v2/http/middleware"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"net/http"
 )
 
 func Init(g *gin.Engine) {
+	// XC: 管理后台入口开关——关闭时整个 /api/admin 组不注册（客户端协议 /api/* 不受影响）
+	if !global.Config.Admin.IsEnabled() {
+		adg := g.Group("/api/admin")
+		adg.Any("/*any", func(c *gin.Context) {
+			c.JSON(http.StatusForbidden, gin.H{"code": 403, "message": "Admin panel is disabled"})
+		})
+		return
+	}
 
 	//swagger
 	//g.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

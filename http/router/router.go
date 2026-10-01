@@ -19,5 +19,12 @@ func WebInit(g *gin.Engine) {
 		g.StaticFS("/webclient", http.Dir(global.Config.Gin.ResourcesPath+"/web"))
 		g.StaticFS("/webclient2", http.Dir(global.Config.Gin.ResourcesPath+"/web2"))
 	}
-	g.StaticFS("/_admin", http.Dir(global.Config.Gin.ResourcesPath+"/admin"))
+	// XC: 管理后台入口开关——关闭时 /_admin 静态资源不可访问
+	if global.Config.Admin.IsEnabled() {
+		g.StaticFS("/_admin", http.Dir(global.Config.Gin.ResourcesPath+"/admin"))
+	} else {
+		g.Any("/_admin/*any", func(c *gin.Context) {
+			c.String(http.StatusForbidden, "Admin panel is disabled")
+		})
+	}
 }

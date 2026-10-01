@@ -86,6 +86,13 @@ func (ct *Login) Login(c *gin.Context) {
 		return
 	}
 
+	// XC: 托管用户不可登录管理后台
+	if u.Type == model.UserTypeManaged {
+		loginLimiter.RecordFailedAttempt(clientIp)
+		response.Fail(c, 101, response.TranslateMsg(c, "ManagedUserCannotLogin"))
+		return
+	}
+
 	ut := service.AllService.UserService.Login(u, &model.LoginLog{
 		UserId:   u.Id,
 		Client:   model.LoginLogClientWebAdmin,
