@@ -2,6 +2,8 @@ package config
 
 import (
 	"os"
+
+	"github.com/spf13/viper"
 )
 
 const (
@@ -21,6 +23,20 @@ type Rustdesk struct {
 	//webclient-magic-queryonline
 	WebclientMagicQueryonline int    `mapstructure:"webclient-magic-queryonline"`
 	WsHost                    string `mapstructure:"ws-host"`
+	// XC: address-book auto sync (mirrors every peer into a shared collection)
+	AutoAbSync       bool   `mapstructure:"auto-ab-sync"`
+	AutoAbCollection string `mapstructure:"auto-ab-collection"`
+}
+
+// XC: Init fills the auto-sync defaults so a fresh deployment works without
+// extra tuning: enabled unless explicitly disabled, default collection name.
+func (rd *Rustdesk) Init(v *viper.Viper) {
+	if v != nil && !v.IsSet("rustdesk.auto-ab-sync") {
+		rd.AutoAbSync = true
+	}
+	if rd.AutoAbCollection == "" {
+		rd.AutoAbCollection = "全部设备"
+	}
 }
 
 func (rd *Rustdesk) LoadKeyFile() {

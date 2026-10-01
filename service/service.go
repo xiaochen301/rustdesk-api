@@ -24,6 +24,8 @@ type Service struct {
 	*ServerCmdService
 	*LdapService
 	*AppService
+	// XC: address-book auto sync
+	*AutoSyncService
 }
 
 type Dependencies struct {

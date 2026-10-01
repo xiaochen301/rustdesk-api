@@ -92,6 +92,8 @@ func Init(rowVal *Config, path string) *viper.Viper {
 		panic(fmt.Errorf("Fatal error config: %s \n", err))
 	}
 	rowVal.Rustdesk.LoadKeyFile()
+	// XC: rustdesk auto-sync defaults
+	rowVal.Rustdesk.Init(v)
 	rowVal.Admin.Init()
 	return v
 }

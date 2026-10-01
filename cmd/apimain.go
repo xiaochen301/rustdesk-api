@@ -211,6 +211,8 @@ func InitGlobal() {
 	})
 	global.LoginLimiter.RegisterProvider(utils.B64StringCaptchaProvider{})
 	DatabaseAutoUpdate()
+	// XC: kick off the address-book auto sync (non-blocking reconciliation)
+	service.AllService.AutoSyncService.Start()
 }
 
 func DatabaseAutoUpdate() {

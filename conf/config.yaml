@@ -51,6 +51,9 @@ rustdesk:
   personal: 1
   webclient-magic-queryonline: 0
   ws-host: ""  #eg: wss://192.168.1.3:4443
+  # XC: 设备自动同步进共享地址簿（替代外挂脚本）；集合按名称查找
+  auto-ab-sync: true
+  auto-ab-collection: "全部设备"
 logger:
   path: "./runtime/log.txt"
   level: "info" #trace,debug,info,warn,error,fatal

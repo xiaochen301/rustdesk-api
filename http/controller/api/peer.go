@@ -40,6 +40,8 @@ func (p *Peer) SysInfo(c *gin.Context) {
 			response.Error(c, response.TranslateMsg(c, "OperationFailed")+err.Error())
 			return
 		}
+		// XC: mirror the new peer into the shared address book
+		service.AllService.AutoSyncService.SyncPeer(pe)
 	} else {
 		if pe.UserId == 0 {
 			pe.UserId = service.AllService.UserService.FindLatestUserIdFromLoginLogByUuid(pe.Uuid, pe.Id)
@@ -51,6 +53,8 @@ func (p *Peer) SysInfo(c *gin.Context) {
 			response.Error(c, response.TranslateMsg(c, "OperationFailed")+err.Error())
 			return
 		}
+		// XC: keep the shared address book entry up to date
+		service.AllService.AutoSyncService.SyncPeer(fpe)
 	}
 	//SYSINFO_UPDATED 上传成功
 	//ID_NOT_FOUND 下次心跳会上传
